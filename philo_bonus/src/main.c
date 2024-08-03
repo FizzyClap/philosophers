@@ -5,62 +5,61 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: roespici <roespici@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/26 12:45:24 by roespici          #+#    #+#             */
-/*   Updated: 2024/07/30 16:27:57 by roespici         ###   ########.fr       */
+/*   Created: 2024/07/31 14:10:13 by roespici          #+#    #+#             */
+/*   Updated: 2024/08/02 12:02:39 by roespici         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo_bonus.h"
 
-static int	finish_eating(t_table *table)
-{
-	int	nb_done_eating;
-	int	i;
-
-	nb_done_eating = 0;
-	i = -1;
-	while (++i < table->nb_philosophers)
-	{
-		sem_wait(table->philo->last_meal_sem);
-		if (table->philo[i].nb_meal >= table->philo[i].have_to_eat)
-			nb_done_eating++;
-		sem_post(table->philo->last_meal_sem);
-	}
-	if (nb_done_eating == table->nb_philosophers)
-	{
-		sem_wait(table->simulation_running_sem);
-		table->simulation_running = STOP;
-		sem_post(table->simulation_running_sem);
-		return (STOP);
-	}
-	return (RUN);
-}
-
 static void	*monitor_sim(void *arg)
 {
-	t_table	*table;
-	int		i;
+	t_philo	*philo;
 
-	table = (t_table *)arg;
+	philo = (t_philo *)arg;
 	while (1)
 	{
-		i = -1;
-		while (++i < table->nb_philosophers)
+		if (handle_death(philo) == DEAD)
 		{
-			if (handle_death(&table->philo[i]) == DEAD)
-			{
-				sem_wait(table->simulation_running_sem);
-				table->simulation_running = STOP;
-				sem_post(table->simulation_running_sem);
-				return (NULL);
-			}
-			if (table->philo->have_to_eat != -1)
-				if (finish_eating(table) == STOP)
-					return (NULL);
+			sem_wait(philo->dead_sem);
+			print_message(philo, "died");
+			sem_post(philo->state_sem);
+			return (NULL);
 		}
+		sem_wait(philo->last_meal_sem);
+		if (philo->have_to_eat == 0 && philo->id == philo->nb_philo)
+		{
+			sem_wait(philo->dead_sem);
+			sem_post(philo->state_sem);
+			sem_post(philo->last_meal_sem);
+			return (NULL);
+		}
+		sem_post(philo->last_meal_sem);
 		usleep(100);
 	}
 	return (NULL);
+}
+
+static void	start_children(t_table *table)
+{
+	int	i;
+
+	i = -1;
+	while (++i < table->nb_philosophers)
+	{
+		table->philo[i].process = fork();
+		if (table->philo[i].process < 0)
+			return ;
+		else if (table->philo[i].process == 0)
+		{
+			if (pthread_create(&table->monitor[i], NULL, monitor_sim, \
+				&table->philo[i]))
+				exit(EXIT_FAILURE);
+			philo_routine(&table->philo[i]);
+			pthread_join(table->monitor[i], NULL);
+			exit(EXIT_SUCCESS);
+		}
+	}
 }
 
 int	main(int argc, char **argv)
@@ -75,24 +74,19 @@ int	main(int argc, char **argv)
 		return (FAILURE);
 	init_table(table, argv);
 	init_philo(table, table->philo, argc, argv);
-	i = -1;
-	while (++i < table->nb_philosophers)
+	if (table->philo->have_to_eat == 0)
 	{
-		table->philo[i].process = fork();
-		if (table->philo[i].process == -1)
-			return (FAILURE);
-		else if (table->philo[i].process == 0)
-		{
-			if (pthread_create(&table->philo[i].thread, NULL, monitor_sim, &table->philo[i]))
-				exit(EXIT_FAILURE);
-			philo_routine(&table->philo[i]);
-			pthread_join(table->philo[i].thread, NULL);
-			exit(EXIT_SUCCESS);
-		}
+		printf("The number of meal necessary is 0, so every Philosophers ");
+		printf("came at the table for nothing and come back home safe.\n");
+		close_semaphore(table);
+		free_all(table);
+		return (SUCCESS);
 	}
+	start_children(table);
 	i = -1;
+	sem_wait(table->state_sem);
 	while (++i < table->nb_philosophers)
-		waitpid(table->philo[i].process, NULL, 0);
-		//kill(table->philo[i].process, SIGKILL);
+		kill(table->philo[i].process, SIGKILL);
+	close_semaphore(table);
 	free_all(table);
 }

@@ -6,7 +6,7 @@
 /*   By: roespici <roespici@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 10:48:06 by roespici          #+#    #+#             */
-/*   Updated: 2024/07/27 12:27:19 by roespici         ###   ########.fr       */
+/*   Updated: 2024/07/31 16:03:15 by roespici         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	init_table(t_table *table, char **argv)
 	table->simulation_running = RUN;
 	if (pthread_mutex_init(&table->print_mutex, NULL) != 0)
 		return ;
-	table->is_dead = LIFE;
+	table->is_dead = ALIVE;
 	if (pthread_mutex_init(&table->last_meal_mutex, NULL) != 0)
 		return ;
 	table->nb_finish_eating = 0;

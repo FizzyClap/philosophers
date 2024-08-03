@@ -6,7 +6,7 @@
 /*   By: roespici <roespici@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/18 13:57:14 by roespici          #+#    #+#             */
-/*   Updated: 2024/07/30 15:46:22 by roespici         ###   ########.fr       */
+/*   Updated: 2024/08/02 12:02:53 by roespici         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,20 @@ static void	monitor_sim(t_table *table)
 	}
 }
 
+static void	start_sim(t_table *table)
+{
+	int	i;
+
+	i = -1;
+	while (++i < table->nb_philosophers)
+	{
+		if (pthread_create(&table->philo[i].thread, NULL, philo_routine, \
+			&table->philo[i]) != 0)
+			return ;
+	}
+	monitor_sim(table);
+}
+
 int	main(int argc, char **argv)
 {
 	t_table	*table;
@@ -72,14 +86,14 @@ int	main(int argc, char **argv)
 		return (FAILURE);
 	init_table(table, argv);
 	init_philo(table, table->philo, argc, argv);
-	i = -1;
-	while (++i < table->nb_philosophers)
+	if (table->philo->have_to_eat == 0)
 	{
-		if (pthread_create(&table->philo[i].thread, NULL, philo_routine, \
-			&table->philo[i]) != 0)
-			return (FAILURE);
+		printf("The number of meal necessary is 0, so every Philosophers ");
+		printf("came at the table for nothing and come back home safe.\n");
+		free_all(table);
+		return (SUCCESS);
 	}
-	monitor_sim(table);
+	start_sim(table);
 	i = -1;
 	while (++i < table->nb_philosophers)
 		pthread_join(table->philo[i].thread, NULL);

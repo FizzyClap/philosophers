@@ -5,50 +5,33 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: roespici <roespici@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/27 11:40:14 by roespici          #+#    #+#             */
-/*   Updated: 2024/07/30 14:21:58 by roespici         ###   ########.fr       */
+/*   Created: 2024/07/31 15:24:29 by roespici          #+#    #+#             */
+/*   Updated: 2024/08/02 12:40:46 by roespici         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo_bonus.h"
 
-int	simulation_status(t_philo *philo)
-{
-	int	status;
-
-	sem_wait(philo->simulation_running_sem);
-	status = *(philo->simulation_running);
-	sem_post(philo->simulation_running_sem);
-	return (status);
-}
-
 static void	release_forks(t_philo *philo)
 {
-	sem_post(philo->left_fork_sem);
-	sem_post(philo->right_fork_sem);
+	sem_post(philo->forks_sem);
+	sem_post(philo->forks_sem);
+	philo->hold_fork = 0;
 }
 
 static int	take_forks(t_philo *philo)
 {
+	sem_wait(philo->priority_sem);
 	if (philo->nb_philo > 1)
 	{
-		sem_wait(philo->left_fork_sem);
-		if (simulation_status(philo) == STOP)
-		{
-			sem_post(philo->left_fork_sem);
-			return (STOP);
-		}
+		sem_wait(philo->forks_sem);
 		print_message(philo, "has taken a fork");
 		philo->hold_fork++;
 	}
-	sem_wait(philo->right_fork_sem);
-	if (simulation_status(philo) == STOP)
-	{
-		release_forks(philo);
-		return (STOP);
-	}
+	sem_wait(philo->forks_sem);
 	print_message(philo, "has taken a fork");
 	philo->hold_fork++;
+	sem_post(philo->priority_sem);
 	return (RUN);
 }
 
@@ -59,7 +42,8 @@ static int	handle_eat(t_philo *philo)
 	if (philo->nb_philo == 1)
 	{
 		usleep(philo->time_to_die * 1000);
-		sem_post(philo->right_fork_sem);
+		sem_post(philo->forks_sem);
+		return (STOP);
 	}
 	if (philo->hold_fork == 2)
 	{
@@ -70,10 +54,10 @@ static int	handle_eat(t_philo *philo)
 		print_message(philo, "is eating");
 		usleep(philo->time_to_eat * 1000);
 		release_forks(philo);
-		philo->hold_fork = 0;
 		sem_wait(philo->last_meal_sem);
 		philo->is_eating = 0;
-		philo->nb_meal++;
+		if (philo->have_to_eat != -1)
+			philo->have_to_eat--;
 		sem_post(philo->last_meal_sem);
 	}
 	return (RUN);
@@ -81,18 +65,15 @@ static int	handle_eat(t_philo *philo)
 
 void	*philo_routine(t_philo *philo)
 {
+	if (philo->id % 2 == 0)
+		usleep(100);
 	while (1)
 	{
-		if (simulation_status(philo) == STOP)
-			break ;
 		print_message(philo, "is thinking");
 		if (handle_eat(philo) == STOP)
 			break ;
-		if (simulation_status(philo) == STOP)
-			break ;
 		print_message(philo, "is sleeping");
-		if (ft_usleep(philo, philo->time_to_sleep) == STOP)
-			break ;
+		usleep(philo->time_to_sleep * 1000);
 	}
 	return (NULL);
 }

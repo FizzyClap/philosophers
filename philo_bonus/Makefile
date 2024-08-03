@@ -1,6 +1,6 @@
 NAME_BONUS = philo_bonus
 CC = cc
-FLAGS = -Wall -Werror -Wextra -fsanitize=thread -g
+FLAGS = -Wall -Werror -Wextra
 RM = rm -rf
 
 SRCS_BONUS =	src/main.c\
@@ -14,6 +14,9 @@ OBJS_BONUS = $(SRCS_BONUS:.c=.o)
 
 $(NAME_BONUS): $(OBJS_BONUS)
 	$(CC) $(FLAGS) -o $(NAME_BONUS) $(OBJS_BONUS)
+
+.c.o:
+	$(CC) $(FLAGS) -c -o $@ $<
 
 all: $(NAME_BONUS)
 

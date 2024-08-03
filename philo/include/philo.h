@@ -6,7 +6,7 @@
 /*   By: roespici <roespici@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/18 13:51:40 by roespici          #+#    #+#             */
-/*   Updated: 2024/07/26 14:07:40 by roespici         ###   ########.fr       */
+/*   Updated: 2024/08/01 12:22:53 by roespici         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 # include <pthread.h>
 # define SUCCESS 0
 # define FAILURE -1
-# define LIFE 0
+# define ALIVE 0
 # define DEAD 1
 # define RUN 1
 # define STOP 0
@@ -61,7 +61,6 @@ typedef struct s_table
 	int				simulation_running;
 	int				is_dead;
 	int				nb_finish_eating;
-	int				have_to_eat;
 	t_philo			*philo;
 }	t_table;
 

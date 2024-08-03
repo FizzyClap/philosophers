@@ -1,6 +1,6 @@
 NAME = philo
 CC = cc
-FLAGS = -Wall -Werror -Wextra -fsanitize=thread -g
+FLAGS = -Wall -Werror -Wextra
 RM = rm -rf
 
 SRCS =	src/main.c\

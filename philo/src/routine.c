@@ -6,7 +6,7 @@
 /*   By: roespici <roespici@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 17:46:13 by roespici          #+#    #+#             */
-/*   Updated: 2024/07/30 09:10:29 by roespici         ###   ########.fr       */
+/*   Updated: 2024/08/01 10:57:43 by roespici         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ static void	release_forks(t_philo *philo)
 {
 	pthread_mutex_unlock(philo->left_fork_mutex);
 	pthread_mutex_unlock(philo->right_fork_mutex);
+	philo->hold_fork = 0;
 }
 
 static int	take_forks(t_philo *philo)
@@ -64,7 +65,6 @@ static int	handle_eat(t_philo *philo)
 		print_message(philo, "is eating");
 		usleep(philo->time_to_eat * 1000);
 		release_forks(philo);
-		philo->hold_fork = 0;
 		pthread_mutex_lock(philo->last_meal_mutex);
 		philo->is_eating = 0;
 		philo->nb_meal++;

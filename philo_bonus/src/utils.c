@@ -6,7 +6,7 @@
 /*   By: roespici <roespici@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/18 13:51:14 by roespici          #+#    #+#             */
-/*   Updated: 2024/07/30 16:36:11 by roespici         ###   ########.fr       */
+/*   Updated: 2024/08/02 11:27:38 by roespici         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,28 +59,9 @@ int	handle_death(t_philo *philo)
 	if (get_current_time() - philo->last_meal >= philo->time_to_die && \
 		!philo->is_eating)
 	{
-		if (*(philo->is_dead) == LIFE)
-		{
-			print_message(philo, "died");
-			*(philo->is_dead) = DEAD;
-		}
 		sem_post(philo->last_meal_sem);
 		return (DEAD);
 	}
 	sem_post(philo->last_meal_sem);
-	return (LIFE);
-}
-
-int	ft_usleep(t_philo *philo, int time_to)
-{
-	int	i;
-
-	i = -1;
-	while (++i < 10)
-	{
-		usleep(time_to * 100);
-		if (simulation_status(philo) == STOP)
-			return (STOP);
-	}
-	return (RUN);
+	return (ALIVE);
 }
