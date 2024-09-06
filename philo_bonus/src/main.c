@@ -6,7 +6,7 @@
 /*   By: roespici <roespici@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 14:10:13 by roespici          #+#    #+#             */
-/*   Updated: 2024/08/02 12:02:39 by roespici         ###   ########.fr       */
+/*   Updated: 2024/09/06 17:34:50 by roespici         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ static void	*monitor_sim(void *arg)
 		{
 			sem_wait(philo->dead_sem);
 			print_message(philo, "died");
+			*(philo->is_dead) = DEAD;
 			sem_post(philo->state_sem);
 			return (NULL);
 		}

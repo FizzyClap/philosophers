@@ -6,7 +6,7 @@
 /*   By: roespici <roespici@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/18 13:51:14 by roespici          #+#    #+#             */
-/*   Updated: 2024/08/02 11:27:38 by roespici         ###   ########.fr       */
+/*   Updated: 2024/09/06 17:41:31 by roespici         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,9 @@ long long	get_current_time(void)
 void	print_message(t_philo *philo, const char *msg)
 {
 	sem_wait(philo->print_sem);
-	printf("%lld %d %s\n", get_current_time() - philo->start_time, \
-			philo->id, msg);
+	if (*(philo->is_dead) == ALIVE)
+		printf("%lld %d %s\n", get_current_time() - philo->start_time, \
+				philo->id, msg);
 	sem_post(philo->print_sem);
 }
 
