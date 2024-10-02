@@ -6,7 +6,7 @@
 /*   By: roespici <roespici@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/26 12:43:11 by roespici          #+#    #+#             */
-/*   Updated: 2024/09/06 17:30:12 by roespici         ###   ########.fr       */
+/*   Updated: 2024/10/02 09:40:41 by roespici         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ typedef struct s_philo
 	int			nb_philo;
 	int			is_eating;
 	int			hold_fork;
-	int			*is_dead;
+	int			is_dead;
 }	t_philo;
 
 typedef struct s_table
@@ -72,7 +72,6 @@ typedef struct s_table
 	sem_t		*simulation_sem;
 	sem_t		*priority_sem;
 	int			nb_forks;
-	int			is_dead;
 	t_philo		*philo;
 }	t_table;
 

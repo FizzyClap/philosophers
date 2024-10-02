@@ -6,7 +6,7 @@
 /*   By: roespici <roespici@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 10:48:06 by roespici          #+#    #+#             */
-/*   Updated: 2024/07/31 16:03:15 by roespici         ###   ########.fr       */
+/*   Updated: 2024/10/02 09:28:25 by roespici         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@ void	init_table(t_table *table, char **argv)
 	table->simulation_running = RUN;
 	if (pthread_mutex_init(&table->print_mutex, NULL) != 0)
 		return ;
-	table->is_dead = ALIVE;
 	if (pthread_mutex_init(&table->last_meal_mutex, NULL) != 0)
 		return ;
 	table->nb_finish_eating = 0;
@@ -76,8 +75,8 @@ void	init_philo(t_table *table, t_philo *philo, int argc, char **argv)
 		philo[i].last_meal = philo[i].start_time;
 		philo[i].hold_fork = 0;
 		philo[i].is_eating = 0;
-		philo[i].is_dead = &table->is_dead;
-		philo[i].simulation_running = &table->simulation_running;
+		philo[i].is_dead = ALIVE;
+		philo[i].simulation_running = RUN;
 		init_mutex(table, philo, i);
 	}
 }

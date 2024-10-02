@@ -6,7 +6,7 @@
 /*   By: roespici <roespici@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/18 13:51:14 by roespici          #+#    #+#             */
-/*   Updated: 2024/09/06 17:28:05 by roespici         ###   ########.fr       */
+/*   Updated: 2024/10/02 09:28:38 by roespici         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ long long	get_current_time(void)
 void	print_message(t_philo *philo, const char *msg)
 {
 	pthread_mutex_lock(philo->print_mutex);
-	if (*(philo->is_dead) == ALIVE)
+	if (philo->is_dead == ALIVE)
 		printf("%lld %d %s\n", get_current_time() - philo->start_time, \
 				philo->id, msg);
 	pthread_mutex_unlock(philo->print_mutex);
@@ -60,9 +60,9 @@ int	handle_death(t_philo *philo)
 	if (get_current_time() - philo->last_meal >= philo->time_to_die && \
 		!philo->is_eating)
 	{
-		if (*(philo->is_dead) == ALIVE)
+		if (philo->is_dead == ALIVE)
 			print_message(philo, "died");
-		*(philo->is_dead) = DEAD;
+		philo->is_dead = DEAD;
 		pthread_mutex_unlock(philo->last_meal_mutex);
 		return (DEAD);
 	}

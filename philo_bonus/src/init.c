@@ -6,7 +6,7 @@
 /*   By: roespici <roespici@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 14:10:58 by roespici          #+#    #+#             */
-/*   Updated: 2024/09/06 17:30:55 by roespici         ###   ########.fr       */
+/*   Updated: 2024/10/02 09:40:46 by roespici         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,6 @@ void	init_table(t_table *table, char **argv)
 	table->last_meal_sem = sem_open("last meal", O_CREAT, 0644, 1);
 	if (table->last_meal_sem == SEM_FAILED)
 		return ;
-	table->is_dead = ALIVE;
 	create_semaphore(table);
 }
 
@@ -93,7 +92,7 @@ void	init_philo(t_table *table, t_philo *philo, int argc, char **argv)
 		philo[i].nb_philo = table->nb_philosophers;
 		philo[i].is_eating = 0;
 		philo[i].hold_fork = 0;
-		philo[i].is_dead = &table->is_dead;
+		philo[i].is_dead = ALIVE;
 		init_semaphore(table, philo, i);
 	}
 }

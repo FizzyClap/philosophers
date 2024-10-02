@@ -6,7 +6,7 @@
 /*   By: roespici <roespici@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 17:46:13 by roespici          #+#    #+#             */
-/*   Updated: 2024/08/01 10:57:43 by roespici         ###   ########.fr       */
+/*   Updated: 2024/10/02 09:34:38 by roespici         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ int	simulation_status(t_philo *philo)
 	int	status;
 
 	pthread_mutex_lock(philo->simulation_running_mutex);
-	status = *(philo->simulation_running);
+	status = philo->simulation_running;
 	pthread_mutex_unlock(philo->simulation_running_mutex);
 	return (status);
 }

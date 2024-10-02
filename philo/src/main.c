@@ -6,7 +6,7 @@
 /*   By: roespici <roespici@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/18 13:57:14 by roespici          #+#    #+#             */
-/*   Updated: 2024/09/06 17:25:30 by roespici         ###   ########.fr       */
+/*   Updated: 2024/10/02 09:38:01 by roespici         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,9 @@ static int	finish_eating(t_table *table)
 	{
 		pthread_mutex_lock(&table->simulation_running_mutex);
 		table->simulation_running = STOP;
+		i = -1;
+		while (++i < table->nb_philosophers)
+			table->philo[i].simulation_running = STOP;
 		pthread_mutex_unlock(&table->simulation_running_mutex);
 		return (STOP);
 	}
@@ -49,12 +52,17 @@ static void	monitor_sim(t_table *table)
 			{
 				pthread_mutex_lock(&table->simulation_running_mutex);
 				table->simulation_running = STOP;
+				i = -1;
+				while (++i < table->nb_philosophers)
+				{
+					table->philo[i].is_dead = DEAD;
+					table->philo[i].simulation_running = STOP;
+				}
 				pthread_mutex_unlock(&table->simulation_running_mutex);
 				return ;
 			}
-			if (table->philo->have_to_eat != -1)
-				if (finish_eating(table) == STOP)
-					return ;
+			if (table->philo->have_to_eat != -1 && finish_eating(table) == STOP)
+				return ;
 		}
 		usleep(100);
 	}

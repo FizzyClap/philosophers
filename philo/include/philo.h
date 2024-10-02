@@ -6,7 +6,7 @@
 /*   By: roespici <roespici@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/18 13:51:40 by roespici          #+#    #+#             */
-/*   Updated: 2024/08/01 12:22:53 by roespici         ###   ########.fr       */
+/*   Updated: 2024/10/02 09:28:08 by roespici         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,8 @@ typedef struct s_philo
 	long long		last_meal;
 	long long		start_time;
 	int				nb_meal;
-	int				*is_dead;
-	int				*simulation_running;
+	int				is_dead;
+	int				simulation_running;
 	int				nb_philo;
 	int				is_eating;
 	int				hold_fork;
@@ -59,7 +59,6 @@ typedef struct s_table
 	pthread_mutex_t	last_meal_mutex;
 	int				nb_forks;
 	int				simulation_running;
-	int				is_dead;
 	int				nb_finish_eating;
 	t_philo			*philo;
 }	t_table;
