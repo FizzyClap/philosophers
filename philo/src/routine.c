@@ -6,7 +6,7 @@
 /*   By: roespici <roespici@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 17:46:13 by roespici          #+#    #+#             */
-/*   Updated: 2024/10/02 09:34:38 by roespici         ###   ########.fr       */
+/*   Updated: 2024/10/05 11:44:27 by roespici         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,10 @@ static int	handle_eat(t_philo *philo)
 		philo->is_eating = 1;
 		pthread_mutex_unlock(philo->last_meal_mutex);
 		print_message(philo, "is eating");
-		usleep(philo->time_to_eat * 1000);
+		if (philo->time_to_eat >= philo->time_to_die)
+			ft_usleep(philo, philo->time_to_eat);
+		else
+			usleep(philo->time_to_eat * 1000);
 		release_forks(philo);
 		pthread_mutex_lock(philo->last_meal_mutex);
 		philo->is_eating = 0;
